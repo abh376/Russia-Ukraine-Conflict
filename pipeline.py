@@ -6,6 +6,8 @@ from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 import os
 import sys
+import re
+
 sys.stdout.reconfigure(encoding='utf-8')
 #load environments variables
 load_dotenv()
@@ -36,7 +38,7 @@ if response.status_code == 200:
     df = pd.read_csv(csv_data, sep=';', on_bad_lines='skip')
 
     print("processing data")
-
+    df.columns = [re.sub(r'\W+', '_', col.strip()) for col in df.columns]
     df.columns = [col.strip().replace("&", "and").replace("-", "_") for col in df.columns]
 
     df["Total_Casualties"] = df[["Casualties", "Injured", "Captured"]].sum(axis=1)
